@@ -9,7 +9,7 @@ client = commands.Bot(command_prefix="!bat ")
 @client.event
 async def on_ready():
     print("Batcomputer is now online!")
-    await client.change_presence(game=discord.Game(name="Use '!bat help' to see commands"))
+    await client.change_presence(game=discord.Game(name="Use '!bat bat' for help"))
 
 @client.command()
 async def rules():
@@ -22,6 +22,10 @@ async def report():
 @client.command()
 async def upcoming():
     await client.say("This is a work in progress, an announcement will be made when this feature is available.")
+
+@client.command()
+async def bat():
+    await client.say("Commands\nrules: tells you where rules are\nreport: give you a link for the report form\nupcoming: Gives you a list of upcoming events (Not Implemented)")
 
 tokenFile = open("token.txt","r")
 token = tokenFile.read()
