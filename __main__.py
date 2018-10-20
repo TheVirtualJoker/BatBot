@@ -1,7 +1,9 @@
 import discord
+import json
+import asyncio
+import os
 from discord.ext.commands import Bot
 from discord.ext import commands
-import asyncio
 
 Client = discord.Client()
 client = commands.Bot(command_prefix="!bat ")
@@ -26,6 +28,38 @@ async def upcoming():
 @client.command()
 async def bat():
     await client.say("Commands\nrules: tells you where rules are\nreport: give you a link for the report form\nupcoming: Gives you a list of upcoming events (Not Implemented)")
+
+@client.event
+async def on_message(message):
+    with open('members.json', 'r') as f:
+        users = json.load(f)
+
+    await update_data(users, message.author)
+    await add_exp(users, message.author, message.channel, 1)
+
+    with open('members.json', 'w') as f:
+        json.dump(users, f)
+
+
+async def update_data(users, user):
+    if not user.id in users:
+        users[user.id] = {}
+        users[user.id]['experience'] = 0
+        users[user.id]['level'] = 1
+        users[user.id]['currency'] = 0
+
+async def add_exp(users, user, channel, amount):
+    users[user.id]['experience'] += amount
+
+    experience = users[user.id]['experience']
+    level_now = users[user.id]['level']
+    level_next = int(level_now * 4)
+
+    if experience >= level_next:
+        await client.send_message(channel, '{} has leveled up to level: {}'.format(user.mention, str(int(level_now + 1))))
+        users[user.id]['level'] += 1
+
+
 
 tokenFile = open("token.txt","r")
 token = tokenFile.read()
