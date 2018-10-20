@@ -9,6 +9,20 @@ Client = discord.Client()
 client = commands.Bot(command_prefix="!bat ")
 
 @client.event
+async def on_message(message):
+    with open('members.json', 'r') as f:
+        users = json.load(f)
+
+    await update_data(users, message.author)
+    await add_exp(users, message.author, message.channel, 1)
+
+    with open('members.json', 'w') as f:
+        json.dump(users, f)
+
+    await client.process_commands(message)
+
+
+@client.event
 async def on_ready():
     print("Batcomputer is now online!")
     await client.change_presence(game=discord.Game(name="Use '!bat bat' for help"))
@@ -29,16 +43,6 @@ async def upcoming():
 async def bat():
     await client.say("Commands\nrules: tells you where rules are\nreport: give you a link for the report form\nupcoming: Gives you a list of upcoming events (Not Implemented)")
 
-@client.event
-async def on_message(message):
-    with open('members.json', 'r') as f:
-        users = json.load(f)
-
-    await update_data(users, message.author)
-    await add_exp(users, message.author, message.channel, 1)
-
-    with open('members.json', 'w') as f:
-        json.dump(users, f)
 
 
 async def update_data(users, user):
@@ -53,7 +57,7 @@ async def add_exp(users, user, channel, amount):
 
     experience = users[user.id]['experience']
     level_now = users[user.id]['level']
-    level_next = int(level_now * 4)
+    level_next = int(level_now * 8)
 
     if experience >= level_next:
         await client.send_message(channel, '{} has leveled up to level: {}'.format(user.mention, str(int(level_now + 1))))
