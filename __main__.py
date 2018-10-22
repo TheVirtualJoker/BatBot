@@ -15,7 +15,7 @@ async def on_message(message):
         users = json.load(f)
 
     ##Ignore channel
-    if message.channel.id != '488931494195232769':
+    if message.channel.id != '488931494195232769' and message.author.id != '499323827013287937':
         await update_data(users, message.author)
         await add_exp(users, message.author, message.channel, 1)
 
